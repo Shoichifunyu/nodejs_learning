@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="../node_modules/mocha/mocha.css" rel="stylesheet">
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <!-- testcode:start -->
+    <img id="capture-image" />
+    <ul id="image-list"></ul>
+    <!-- testcode:end -->
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
+    <script src="../node_modules/sinon/pkg/sinon.js"></script>
+    <script>
+      mocha.ui('bdd')
+      expect = chai.expect
+    </script>
+    <script src="../www/js/actions.js"></script>
+    <script src="../www/js/logics.js"></script>
+    <script src="config.js"></script>
+    <script src="spec.js"></script>
+    <script>
+      mocha.run()
+    </script>
+  </body>
+</html>
