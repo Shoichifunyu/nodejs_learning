@@ -1,8 +1,10 @@
-const crypto = require("crypto");
+var express = require('express');
 var http = require('http');
+
+var app = express();
+var server = http.createServer(app);
 var fs = require('fs');
-var url = require('url');  
-var server = http.createServer();
+var url = require('url');
 
 const indexPage = fs.readFileSync('./index.html', 'UTF-8');
 //  一問一答処理を管理するためのフラグ（グローバル変数）
@@ -12,34 +14,11 @@ var act_buy_list_ctrl = false;
 // 買い物リスト記録ソケットの数を2以上にしないためのカウントアップ変数
 var act_buy_list_cnt = 0;
 
-server.on('request', function(request, response) {
-    // if (request.method === 'GET') {
-        var url_parts = url.parse(request.url, true);
-        if (url_parts.pathname === '/index.html') {
-            response.writeHead(200, {'content-type' : 'text/html'})
-            response.write(indexPage);
-            response.end();
-        } else if (url_parts.pathname === '/receive.html') {
-            response.writeHead(200, {'content-type' : 'text/html'})
-            response.write(receivePage);
-            response.end();
-        } else if (url_parts.pathname === '/data.txt'){
-            response.writeHead(200, {'content-type' : 'text/plain'})
-            response.write(dataPage);
-            response.end();         
-        } else {
-            response.end('no page found');
-        }
-    // } else if (request.method === 'POST') {
-        // ;
-    // }
-});
-
-var io = socketIO.listen(server);
-server.listen(8000);
-
 const json = fs.readFileSync('./list.json', 'utf-8');
 const data = JSON.parse(json);
+
+
+var io = require('socket.io').listen(server);
 
 io.on('connection', function(socket){
 
@@ -166,4 +145,27 @@ io.on('connection', function(socket){
       });
 });
 
-server.listen(port);
+app.get("/", function(request, response) {
+    // if (request.method === 'GET') {
+        var url_parts = url.parse(request.url, true);
+        if (url_parts.pathname === '/index.html') {
+            response.writeHead(200, {'content-type' : 'text/html'})
+            response.write(indexPage);
+            response.end();
+        } else if (url_parts.pathname === '/receive.html') {
+            response.writeHead(200, {'content-type' : 'text/html'})
+            response.write(receivePage);
+            response.end();
+        } else if (url_parts.pathname === '/data.txt'){
+            response.writeHead(200, {'content-type' : 'text/plain'})
+            response.write(dataPage);
+            response.end();         
+        } else {
+            response.end('no page found');
+        }
+    // } else if (request.method === 'POST') {
+        // ;
+    // }
+});
+
+server.listen(8000);
