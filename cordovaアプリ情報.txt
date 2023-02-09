@@ -1,0 +1,1 @@
+cordova create shopping_app_v2 com.shoichi.shopping_memo ShoichiShoppingMemo
