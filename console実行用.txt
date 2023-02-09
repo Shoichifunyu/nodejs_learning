@@ -1,0 +1,11 @@
+fetch('http://localhost:8000/api/post', {
+    method: 'POST'
+})
+    .then((response) => response.json())
+    .then((data) => console.log(data));
+
+    fetch('http://localhost:8000/api/put', {
+        method: 'PUT'
+    })
+        .then((response) => response.json())
+        .then((data) => console.log(data));
