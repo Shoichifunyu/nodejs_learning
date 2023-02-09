@@ -1,3 +1,3 @@
 ENV = {
-    "serverurl": "http://localhost:3000/"
+    "serverurl": "http://localhost:8000/"
   };
