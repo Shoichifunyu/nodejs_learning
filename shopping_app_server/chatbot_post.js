@@ -4,7 +4,6 @@ var http = require('http');
 var app = express();
 var server = http.createServer(app);
 var fs = require('fs');
-var url = require('url');
 
 //  一問一答処理を管理するためのフラグ（グローバル変数）
 var qa_msg_ctrl = false;
@@ -13,15 +12,21 @@ var act_buy_list_ctrl = false;
 // 買い物リスト記録ソケットの数を2以上にしないためのカウントアップ変数
 var act_buy_list_cnt = 0;
 
-const json = fs.readFileSync('./shopping_app_server/list.json', 'utf-8');
+const json = fs.readFileSync('./list.json', 'utf-8');
 const data = JSON.parse(json);
+console.log(data);
 
 
-var io = require('socket.io')(server);
+const io = require("socket.io")(server, {
+    cors: {
+      origin: "http://localhost:8001",
+      methods: ["GET", "POST"]
+    }
+  });
 
 app.use((request, response, next) => {
     if (request.method === 'OPTIONS') {
-        response.append('Access-Control-Allow-Origin', 'http://localhost:3000')
+        response.append('Access-Control-Allow-Origin', 'http://localhost:8001')
         response.append('Access-Control-Allow-Origin', 'PUT')
         return response.status(204).send('')
     }
@@ -36,28 +41,30 @@ app.use((request, response, next) => {
 
 app.get("/api/get", function(request, response) {
     // if (request.method === 'GET') {
-        response.append('Access-Control-Allow-Origin', 'http://localhost:3000')
+        response.append('Access-Control-Allow-Origin', 'http://localhost:8001')
         // 確認用
         response.status(200).json({foo: 'bar'});
 });
 
 app.post("/api/post", function(request, response) {
     // if (request.method === 'GET') {
-        response.append('Access-Control-Allow-Origin', 'http://localhost:3000')
+        response.append('Access-Control-Allow-Origin', 'http://localhost:8001')
         // 確認用
         response.status(200).json({method: 'post'});
 });
 
-app.put("/api/post", function(request, response) {
+app.put("/api/put", function(request, response) {
     // if (request.method === 'GET') {
-        response.append('Access-Control-Allow-Origin', 'http://localhost:3000')
+        response.append('Access-Control-Allow-Origin', 'http://localhost:8001')
         // 確認用
         response.status(200).json({method: 'put'});
 });
 
 io.on('connection', function(socket){
+    console.log("io connected");
 
     socket.on('chat_before', function(send_msg){
+        console.log("chat_bofore connected");
         io.emit('chat_before', send_msg);
     }),
 
@@ -76,6 +83,8 @@ io.on('connection', function(socket){
     }),
     // 従来処理（一問一答）
     socket.on('chat', function(msg){
+        console.log("chat connected");
+        console.log(msg);
         for (let i = 0; i < data.length; i++) {
             if ((data[i].pattern === "選択肢") && (msg.indexOf(data[i].genre) > -1)) {
                 // 代わりに選択肢処理を行う
@@ -126,14 +135,14 @@ io.on('connection', function(socket){
                                     qa_msg_ctrl = false;
                                     return;
                                 } else {
-                                    var read_json = fs.readFileSync('./shopping_app_server/list.json', 'utf-8');
+                                    var read_json = fs.readFileSync('./list.json', 'utf-8');
                                     var read_json_data = JSON.parse(read_json);
                                     buy_list["buy_item"] = obj;
                                     read_json_data.push(buy_list);
                                     fs.writeFileSync(filename,JSON.stringify(read_json_data,null," "),"utf-8");
                                 }
                             }
-                        addJSONData('./shopping_app_server/list.json',buy_item);
+                        addJSONData('./list.json',buy_item);
                         } else {
                             ;
                         }
@@ -144,7 +153,7 @@ io.on('connection', function(socket){
             }
         } else if (slcted_action === "買う物確認") {
             io.emit('slcted_action', "今までに記録した買う物のリストは以下の通りだよ。");
-            var read_json = fs.readFileSync('./shopping_app_server/list.json', 'utf-8');
+            var read_json = fs.readFileSync('./list.json', 'utf-8');
             var read_json_data = JSON.parse(read_json);
             for (let i = 0; i < read_json_data.length; i++) {
                 if (read_json_data[i].pattern === "買い物リスト") {        
@@ -158,12 +167,12 @@ io.on('connection', function(socket){
             slcted_action = "";
             io.emit('select_list', JSON.stringify(data[3]));
         } else if (slcted_action === "はい") {
-            var read_json = fs.readFileSync('./shopping_app_server/list.json', 'utf-8');
+            var read_json = fs.readFileSync('./list.json', 'utf-8');
             var read_json_data = JSON.parse(read_json);
             var deleted_list =  read_json_data.filter(function(list) {
                 return list.pattern !== "買い物リスト";
             });
-            fs.writeFileSync('./shopping_app_server/list.json',JSON.stringify(deleted_list,null," "),"utf-8");
+            fs.writeFileSync('./list.json',JSON.stringify(deleted_list,null," "),"utf-8");
             } else {
                 ;
             }

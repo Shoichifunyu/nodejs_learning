@@ -5,9 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>チャットボット</title>
-    <script src="https://cdn.socket.io/4.6.0/socket.io.min.js"></script>
-    <!-- <script src="http://localhost:8001/socket.io/socket.io.js"></script> -->
-    <!-- <script src="/socket.io/socket.io.js"></script> -->
+    <script src="../node_modules/socket.io-client/dist/socket.io.js"></script>
     <style>
 
     #balloon_left,
@@ -58,7 +56,7 @@
 </head>
 
 <body>
-    <form name="myform" method="GET">
+    <form name="myform" method="POST">
         <input name="text" type="text">
         <button name="btn">送信</button>
     </form>
@@ -67,7 +65,7 @@
     </div>
 
     <script>
-        const socket = require("socket.io-client")("http://localhost:8001");
+        const socket = io("http://localhost:8000");
         var form = document.forms.myform;
         var balloon = document.getElementById('balloon');
         // 複数のボタン管理用
@@ -84,8 +82,7 @@
             socket.emit('buy_item', form.text.value);
             form.text.value = '';
         });
-
-
+        
         // クライアントの送信内容をそのまま表示する
         socket.on('chat_before', function(send_msg){
             var div = document.createElement('div');
@@ -150,8 +147,6 @@
             div.appendChild(p);
             balloon.appendChild(div);
         });
-
-        
     </script>
     
 </body>
