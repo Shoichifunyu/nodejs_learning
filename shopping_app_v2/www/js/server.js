@@ -4,7 +4,7 @@ const express = require('express');
 const app = express();
 
 app.use(
-    '/api',
+    '/',
     createProxyMiddleware({
         target: 'http://localhost:8000'
     })
@@ -13,7 +13,8 @@ app.use(
 app.use('/static', express.static(path.join(__dirname, 'build', 'static')));
 
 app.get('/*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'build', '../../index.html'))
+    res.sendFile(path.join(__dirname, 'build', '../../index.html'));
+    console.log(req.method, req.url);
 });
 
 app.use((err, req, res, next) => {

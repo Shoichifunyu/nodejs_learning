@@ -19,43 +19,47 @@ console.log(data);
 
 const io = require("socket.io")(server, {
     cors: {
-      origin: "http://localhost:8001",
+      origin: "https://localhost",
       methods: ["GET", "POST"]
     }
   });
 
 app.use((request, response, next) => {
     if (request.method === 'OPTIONS') {
-        response.append('Access-Control-Allow-Origin', 'http://localhost:8001')
+        console.log("こことおるの？");
+        console.log(request.method, request.url);
+        response.append('Access-Control-Allow-Origin', 'https://localhost')
         response.append('Access-Control-Allow-Origin', 'PUT')
         return response.status(204).send('')
     }
-
     try {
         console.log(request.method, request.url);
         next();
     } catch(err) {
+        console.log(err);
         next(err);
     }
 });
 
-app.get("/api/get", function(request, response) {
+app.get("/", function(request, response) {
     // if (request.method === 'GET') {
-        response.append('Access-Control-Allow-Origin', 'http://localhost:8001')
+        console.log("ここはとおるの？");
+        console.log(response.method, response.url);
+        response.append('Access-Control-Allow-Origin', 'https://localhost')
         // 確認用
         response.status(200).json({foo: 'bar'});
 });
 
 app.post("/api/post", function(request, response) {
     // if (request.method === 'GET') {
-        response.append('Access-Control-Allow-Origin', 'http://localhost:8001')
+        response.append('Access-Control-Allow-Origin', 'https://localhost')
         // 確認用
         response.status(200).json({method: 'post'});
 });
 
 app.put("/api/put", function(request, response) {
     // if (request.method === 'GET') {
-        response.append('Access-Control-Allow-Origin', 'http://localhost:8001')
+        response.append('Access-Control-Allow-Origin', 'https://localhost')
         // 確認用
         response.status(200).json({method: 'put'});
 });
