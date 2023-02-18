@@ -6,7 +6,7 @@ const app = express();
 app.use(
     '/',
     createProxyMiddleware({
-        target: 'http://localhost:8000'
+        target: '192.168.11.14:8000'
     })
 );
 

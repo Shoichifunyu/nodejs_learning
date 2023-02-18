@@ -1,9 +1,13 @@
 var express = require('express');
-var http = require('http');
-
-var app = express();
-var server = http.createServer(app);
+var http = require('https');
 var fs = require('fs');
+var app = express();
+var server = http.createServer({
+    key: fs.readFileSync('./privatekey.pem'),
+    cert: fs.readFileSync('./cert.pem'),
+}, app);
+
+
 
 //  一問一答処理を管理するためのフラグ（グローバル変数）
 var qa_msg_ctrl = false;
@@ -16,7 +20,6 @@ const json = fs.readFileSync('./list.json', 'utf-8');
 const data = JSON.parse(json);
 console.log(data);
 
-
 const io = require("socket.io")(server, {
     cors: {
       origin: "https://localhost",
@@ -24,10 +27,15 @@ const io = require("socket.io")(server, {
     }
   });
 
+
 app.use((request, response, next) => {
     if (request.method === 'OPTIONS') {
         console.log("こことおるの？");
         console.log(request.method, request.url);
+        // response.header("Access-Control-Allow-Origin", "*");
+        // response.header("Access-Control-Allow-Headers", "X-Requested-With");
+        // response.header("Access-Control-Allow-Headers", "Content-Type");
+        // response.header("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
         response.append('Access-Control-Allow-Origin', 'https://localhost')
         response.append('Access-Control-Allow-Origin', 'PUT')
         return response.status(204).send('')
