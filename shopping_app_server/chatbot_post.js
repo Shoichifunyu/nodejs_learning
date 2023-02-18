@@ -1,8 +1,8 @@
 var express = require('express');
-var http = require('https');
+var https = require('https');
 var fs = require('fs');
 var app = express();
-var server = http.createServer({
+var server = https.createServer({
     key: fs.readFileSync('./privatekey.pem'),
     cert: fs.readFileSync('./cert.pem'),
 }, app);
@@ -22,7 +22,7 @@ console.log(data);
 
 const io = require("socket.io")(server, {
     cors: {
-      origin: "https://localhost",
+      origin: "*",
       methods: ["GET", "POST"]
     }
   });
@@ -36,7 +36,7 @@ app.use((request, response, next) => {
         // response.header("Access-Control-Allow-Headers", "X-Requested-With");
         // response.header("Access-Control-Allow-Headers", "Content-Type");
         // response.header("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
-        response.append('Access-Control-Allow-Origin', 'https://localhost')
+        response.append('Access-Control-Allow-Origin', "*")
         response.append('Access-Control-Allow-Origin', 'PUT')
         return response.status(204).send('')
     }
@@ -53,21 +53,21 @@ app.get("/", function(request, response) {
     // if (request.method === 'GET') {
         console.log("ここはとおるの？");
         console.log(response.method, response.url);
-        response.append('Access-Control-Allow-Origin', 'https://localhost')
+        response.append('Access-Control-Allow-Origin', "*")
         // 確認用
         response.status(200).json({foo: 'bar'});
 });
 
 app.post("/api/post", function(request, response) {
     // if (request.method === 'GET') {
-        response.append('Access-Control-Allow-Origin', 'https://localhost')
+        response.append('Access-Control-Allow-Origin', "*")
         // 確認用
         response.status(200).json({method: 'post'});
 });
 
 app.put("/api/put", function(request, response) {
     // if (request.method === 'GET') {
-        response.append('Access-Control-Allow-Origin', 'https://localhost')
+        response.append('Access-Control-Allow-Origin', "*")
         // 確認用
         response.status(200).json({method: 'put'});
 });
@@ -201,8 +201,6 @@ io.on('connection', function(socket){
       });
 });
 
-
-
-server.listen(8000, () => {
+server.listen(443, () => {
     console.log("start listening")
 })
