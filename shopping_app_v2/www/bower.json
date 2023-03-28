@@ -1,0 +1,20 @@
+{
+  "name": "shopping_memo_npm",
+  "description": "A sample Apache Cordova application that responds to the deviceready event.",
+  "main": "index.js",
+  "authors": [
+    "Apache Cordova Team"
+  ],
+  "license": "Apache-2.0",
+  "keywords": [
+    "ecosystem:cordova"
+  ],
+  "homepage": "https://github.com/Shoichifunyu/nodejs_learning",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

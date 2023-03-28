@@ -2,10 +2,14 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>チャットボット</title>
-    <script src="../node_modules/socket.io-client/dist/socket.io.js"></script>
+    <!-- <script src="./node_modules/socket.io-client/dist/socket.io.js"></script> -->
+    <script src="bower_components/socket.io-client/socket.io.js"></script>
+    <script type="text/javascript" src="cordova.js"></script>
+    <script data-main="./js/server.js" src="bower_components/requirejs/require.js"></script>
+    <!-- <script src="./js/bundle.js"></script> -->
+    <!-- <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script> -->
     <style>
 
     #balloon_left,
@@ -65,7 +69,21 @@
     </div>
 
     <script>
-        const socket = io("https://192.168.11.14:443");
+        const socket = io("https://c104-113-149-235-78.ap.ngrok.io",{
+            extraHeaders: {
+            'Access-Control-Request-Method': 'GET, POST',
+            'Access-Control-Allow-Origin': true,
+            'Access-Control-Allow-Methods': 'GET, POST',
+            'Access-Control-Allow-Headers': "Content-Type"
+        },
+        transportOptions: {
+            polling: {
+            extraHeaders: {
+                "my-custom-header": "abcd"
+            }
+            }
+        }
+        });
         var form = document.forms.myform;
         var balloon = document.getElementById('balloon');
         // 複数のボタン管理用

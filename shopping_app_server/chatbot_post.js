@@ -2,6 +2,8 @@ var express = require('express');
 var https = require('https');
 var fs = require('fs');
 var app = express();
+const cors = require('cors');
+app.use(cors());
 var server = https.createServer({
     key: fs.readFileSync('./privatekey.pem'),
     cert: fs.readFileSync('./cert.pem'),
@@ -21,22 +23,22 @@ const data = JSON.parse(json);
 console.log(data);
 
 const io = require("socket.io")(server, {
+    allowEIO3: true,
     cors: {
-      origin: "*",
-      methods: ["GET", "POST"]
+      origin: true,
+      credentials: true
     }
   });
-
 
 app.use((request, response, next) => {
     if (request.method === 'OPTIONS') {
         console.log("こことおるの？");
         console.log(request.method, request.url);
-        // response.header("Access-Control-Allow-Origin", "*");
-        // response.header("Access-Control-Allow-Headers", "X-Requested-With");
-        // response.header("Access-Control-Allow-Headers", "Content-Type");
+        response.header("Access-Control-Allow-Origin", '*');
+        response.header("Access-Control-Allow-Headers", "X-Requested-With");
+        response.header("Access-Control-Allow-Headers", "Content-Type");
         // response.header("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
-        response.append('Access-Control-Allow-Origin', "*")
+        response.append('Access-Control-Allow-Origin', '*')
         response.append('Access-Control-Allow-Origin', 'PUT')
         return response.status(204).send('')
     }
@@ -51,23 +53,29 @@ app.use((request, response, next) => {
 
 app.get("/", function(request, response) {
     // if (request.method === 'GET') {
+        response.set('Access-Control-Allow-Origin', '*');
+        response.setHeader("Access-Control-Allow-Origin", '*');
         console.log("ここはとおるの？");
         console.log(response.method, response.url);
-        response.append('Access-Control-Allow-Origin', "*")
+        response.append('Access-Control-Allow-Origin', '*')
         // 確認用
         response.status(200).json({foo: 'bar'});
 });
 
 app.post("/api/post", function(request, response) {
     // if (request.method === 'GET') {
-        response.append('Access-Control-Allow-Origin', "*")
+        response.set('Access-Control-Allow-Origin', "https://localhost/index.html ");
+        response.setHeader("Access-Control-Allow-Origin", "https://localhost/index.html ");
+        response.append('Access-Control-Allow-Origin', "https://localhost/index.html ")
         // 確認用
         response.status(200).json({method: 'post'});
 });
 
 app.put("/api/put", function(request, response) {
     // if (request.method === 'GET') {
-        response.append('Access-Control-Allow-Origin', "*")
+        response.set('Access-Control-Allow-Origin', "https://localhost/index.html ");
+        response.setHeader("Access-Control-Allow-Origin", "https://localhost/index.html ");
+        response.append('Access-Control-Allow-Origin', "https://localhost/index.html ")
         // 確認用
         response.status(200).json({method: 'put'});
 });
@@ -198,7 +206,7 @@ io.on('connection', function(socket){
         // 一問一答処理停止の解除
         qa_msg_ctrl = false;
         console.log("disconnected");
-      });
+    });
 });
 
 server.listen(443, () => {
